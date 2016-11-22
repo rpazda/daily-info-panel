@@ -65,7 +65,7 @@ function updateWeather() {
 
         //var connectionString = "http://api.wunderground.com/api/8f4f737948165dbd/conditions/q/FL/Oviedo.json";
 
-        //apiKey = "";
+        //var apiKey = "";
         
         var connectionString = "http://api.wunderground.com/api/"+apiKey+"/conditions/q/FL/Oviedo.json";
         //var weatherData = httpGet(connectionString);
