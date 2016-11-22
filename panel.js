@@ -63,8 +63,6 @@ function updateWeather() {
     //Helper function for updateWeather(), Gets weather data via json request and returns it as a JSON string
     function getWeatherData(){
 
-        //var connectionString = "http://api.wunderground.com/api/8f4f737948165dbd/conditions/q/FL/Oviedo.json";
-
         //var apiKey = "";
         
         var connectionString = "http://api.wunderground.com/api/"+apiKey+"/conditions/q/FL/Oviedo.json";
