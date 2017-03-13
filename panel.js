@@ -151,7 +151,7 @@ function updateWeather() {
 function setDate(){
                     
     var today = new Date();
-    var weekDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    var weekDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     var weekDay = weekDays[today.getDay()];
     var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November","December"];
     var month = monthNames[today.getMonth()];
