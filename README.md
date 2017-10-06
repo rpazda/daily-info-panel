@@ -1,7 +1,7 @@
 # daily-info-panel
 A simple dashboard UI for UCF students
 
-##Features
+## Features
 
 * Weather info including current temperatures, humidity, and UV index
 * A traffic map of the area near campus
@@ -10,7 +10,7 @@ A simple dashboard UI for UCF students
 * Time and Date
 * Sunrise/Sunset times
 
-##Usage
+## Usage
 
 To use the dashboard all you need is a computer with a modern web browser and two API keys. 
 
@@ -18,7 +18,7 @@ The application consists of two components, an .html file and a .js file. They s
 
 For the application to get the required data it needs a Google Maps API key and a Weather Underground API key. These can both be acquired for free but I cannot provide them because the versions that can be gotten for free have usage limits that would limit subsequent users.
 
-###API Keys
+### API Keys
 
 A Weather Underground key can be acquired for free [here](https://www.wunderground.com/weather/api/).
 
