@@ -5,7 +5,7 @@ $(document).ready( function(){
     setDate();
     setSunriseSunset();
     //getParkingData();
-    $("#parking-data").attr("src", "http://secure.parking.ucf.edu/GarageCount");
+    $("#parking-data").attr("src", "https://secure.parking.ucf.edu/GarageCount");
     initMap();
     refreshParkingData();
     
@@ -65,7 +65,7 @@ function updateWeather() {
 
         //var apiKey = "";
         
-        var connectionString = "http://api.wunderground.com/api/"+apiKey+"/conditions/q/FL/Oviedo.json";
+        var connectionString = "https://api.wunderground.com/api/"+apiKey+"/conditions/q/FL/Oviedo.json";
         //var weatherData = httpGet(connectionString);
             
         var Httpreq = new XMLHttpRequest();
@@ -174,7 +174,7 @@ function setSunriseSunset(){
     var t = setTimeout(startTime, 500000);	//restart function 
     
     function getSunriseSunset(){
-        var connectionString = "http://api.sunrise-sunset.org/json?lat=28.613474&lng=-81.200157";
+        var connectionString = "https://api.sunrise-sunset.org/json?lat=28.613474&lng=-81.200157";
         
         var Httpreq = new XMLHttpRequest();
         Httpreq.open("GET", connectionString, false);
@@ -215,7 +215,8 @@ function convertUTCtoLocal(time){	//Big ups to digitalbath! http://stackoverflow
 }*/
 
 function refreshParkingData(){
-    $("#parking-data").contentWindow.location.reload(); //reload parking iframe
+    //$("#parking-data").contentWindow.location.reload(); //reload parking iframe
+    $("#parking-data").src = $("#parking-data").src;
     var t = setTimeout(setDate, 300000);
 }
 
