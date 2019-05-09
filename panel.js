@@ -1,13 +1,13 @@
 //Start all panel functions once page is ready
 $(document).ready( function(){
     startTime(); 
-    updateWeather(); 
     setDate();
     setSunriseSunset();
+    updateWeather();
     //getParkingData();
     $("#parking-data").attr("src", "https://secure.parking.ucf.edu/GarageCount");
-    initMap();
-    refreshParkingData();
+    //initMap();
+    //refreshParkingData();
     
 });
 
@@ -39,112 +39,70 @@ function startTime() {
     }
 
 function updateWeather() {
-    var weatherData = getWeatherData();
-    var parsedWeatherData = JSON.parse(weatherData);
     
-    var actualTemp = parsedWeatherData.current_observation.temperature_string;
-    var feelTemp = parsedWeatherData.current_observation.feelslike_string;
-    var weatherIcon = getIcon(parsedWeatherData.current_observation.icon);
-    var humidity = parsedWeatherData.current_observation.relative_humidity;
-    var UV = parsedWeatherData.current_observation.UV;
-    var weatherstring = parsedWeatherData.current_observation.weather;
-    //chance of rain
-    
-    $("#temp-real").html(actualTemp);
-    $("#temp-feel").html(feelTemp);
-    $("#weather-icon").html(weatherIcon);
-    $("#humidity").html(humidity);  //update humidity 		
-    $("#UV").html(UV);              //update UV 			
-    //update chance of rain $("#chance-of-rain").html();
-    $("#weather-string").html(weatherstring);
+    var connectionString = 'http://api.openweathermap.org/data/2.5/weather?id='+cityId+'&units=imperial&appid='+apiKey
 
-    var tt = setTimeout(updateWeather, 360000);	//fetch weather every 6 min
+    // var lat = ;
+    // var lon = ;
+
+    var UVconnectionString = 'http://api.openweathermap.org/data/2.5/uvi?lat='+lat+'&lon='+lon+'&appid='+apiKey
+
+    $.ajax({
+        method: 'GET',
+        url: connectionString,
+        dataType: 'jsonp',
+        success: (res) => {
+            console.log(res)
+            var actualTemp = res.main.temp;
+            // var feelTemp = parsedWeatherData.current_observation.feelslike_string;
+            var weatherIcon = weatherIcons[res.weather[0].icon];
+            var humidity = res.main.humidity;
+            // var UV = parsedWeatherData.current_observation.UV;
+            var weatherstring = res.weather[0].description
+                .toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+                //https://stackoverflow.com/questions/4878756/how-to-capitalize-first-letter-of-each-word-like-a-2-word-city
+
+            $("#temp-real").html(parseInt(actualTemp)+"° F");
+            // $("#temp-feel").html(feelTemp);
+            $("#weather-icon").html("<i class='"+weatherIcon+"'></i>");
+            $("#humidity").html(humidity+"%");  //update humidity 		
+            // $("#UV").html(UV);              //update UV 			
+            // //update chance of rain $("#chance-of-rain").html();
+            $("#weather-string").html(weatherstring);
+        } 
+    });
+
+    $.ajax({
+        method: 'GET',
+        url: UVconnectionString,
+        dataType: 'json',
+        success: (res) => {
+            console.log(res)
+            var UV = res.value;
+            $("#UV").html(UV);              //update UV 	
+        } 
+    });
+
+    setTimeout(updateWeather, 360000);	//fetch weather every 6 min
     
     //Helper function for updateWeather(), Gets weather data via json request and returns it as a JSON string
     function getWeatherData(){
-
-        //var apiKey = "";
+        /* 
         
-        var connectionString = "https://api.wunderground.com/api/"+apiKey+"/conditions/q/FL/Oviedo.json";
+            No longer needed but leaving in as a memorial to a time when I relied on synchronous requests and for the Weather Underground API, which I used in the first version of this but was retired in Dec 2018. RIP
+        
+        */
+        //var apiKey = "";
+        //var connectionString = "https://api.wunderground.com/api/129fd8588ff952ea/conditions/q/FL/Oviedo.json";
         //var weatherData = httpGet(connectionString);
             
-        var Httpreq = new XMLHttpRequest();
-        Httpreq.open("GET", connectionString, false);
-        Httpreq.send(null);
-        
-        return Httpreq.responseText;
-        
+        //var Httpreq = new XMLHttpRequest();
+        //Httpreq.open("GET", connectionString, false);
+        //Httpreq.send(null);
+
+        //return Httpreq.responseText;  
     }
     
-    // Maps icon information from the WU API to icons from weather-icons
-    function getIcon(iconName){
-        
-        var iconHtml = "";
-        
-        switch(iconName){
-            
-            case "chanceofflurries":
-                iconHtml = "<i class='wi wi-snow'></i>";
-                break;
-            case "chanceofrain":
-                iconHtml = "<i class='wi wi-rain'></i>";
-                break;
-            case "chanceofsleet":
-                iconHtml = "<i class='wi wi-sleet'></i>";
-                break;
-            case "chanceofsnow":
-                iconHtml = "<i class='wi wi-snow'></i>";
-                break;
-            case "chanceofathunderstorm":
-                iconHtml = "<i class='wi wi-thunderstorm'></i>";
-                break;
-            case "clear":
-                iconHtml = "<i class='fa fa-smile-o'></i>";
-                break;
-            case "cloudy":
-                iconHtml = "<i class='wi wi-cloudy'></i>";
-                break;
-            case "flurries":
-                iconHtml = "<i class='wi wi-snow'></i>";
-                break;
-            case "hazy":
-                iconHtml = "<i class='wi wi-day-haze'></i>";
-                break;
-            case "mostlycloudy":
-                iconHtml = "<i class='wi wi-cloud'></i>";
-                break;
-            case "mostlysunny":
-                iconHtml = "<i class='wi wi-day-sunny'></i>";
-                break;
-            case "partlycloudy":
-                iconHtml = "<i class='wi wi-cloud'></i>";
-                break;
-            case "partlysunny":
-                iconHtml = "<i class='wi wi-day-cloudy'></i>";
-                break;
-            case "rain":
-                iconHtml = "<i class='wi wi-day-rain'></i>";
-                break;
-            case "sleet":
-                iconHtml = "<i class='wi wi-day-sleet'></i>";
-                break;
-            case "snow":
-                iconHtml = "<i class='wi wi-snow'></i>";
-                break;
-            case "sunny":
-                iconHtml = "<i class='wi wi-day-sunny'></i>";
-                break;
-            case "thunderstorm":
-                iconHtml = "<i class='wi wi-day-thunderstorm'></i>";
-                break;
-            case "unknown":
-                iconHtml = "<i class='fa fa-question'></i>";
-                break;
-            default:
-                iconHtml = "<i class='fa fa-question'></i>";
-        }
-        return iconHtml;
-    }
 }
 
 //Displays the date in a familiar, legible format.
@@ -167,14 +125,15 @@ function setSunriseSunset(){
     sunriseSunsetData = JSON.parse(getSunriseSunset());
     var sunrise = convertUTCtoLocal("01/01/1999 "+sunriseSunsetData.results.sunrise+" UTC");
     var sunset = convertUTCtoLocal("01/01/1999 "+sunriseSunsetData.results.sunset+" UTC");
-    
+
     $("#sunrise").html(sunrise);
     $("#sunset").html(sunset);
     
     var t = setTimeout(startTime, 500000);	//restart function 
     
     function getSunriseSunset(){
-        var connectionString = "https://api.sunrise-sunset.org/json?lat=28.613474&lng=-81.200157";
+
+        var connectionString = "https://api.sunrise-sunset.org/json?lat="+lat+"&lng="+lon;
         
         var Httpreq = new XMLHttpRequest();
         Httpreq.open("GET", connectionString, false);
@@ -186,6 +145,7 @@ function setSunriseSunset(){
 
 function convertUTCtoLocal(time){	//Big ups to digitalbath! http://stackoverflow.com/questions/6525538/convert-utc-date-time-to-local-date-time-using-javascript
     var localTimeFull = new Date(time);
+
     var hour = localTimeFull.getHours();
     var AMPM = "AM";
     if(hour > 11){
@@ -200,72 +160,4 @@ function convertUTCtoLocal(time){	//Big ups to digitalbath! http://stackoverflow
     return localTime;  
 }
 
-/*function getParkingData(){
-    var garageCounts = $.get("http://localhost/garages", function(data){
-         $("#garages").html(
-            "<tr><td>Garage A</td><td>"+data[0]+"</td></tr>"+
-            "<tr><td>Garage B</td><td>"+data[1]+"</td></tr>"+
-            "<tr><td>Garage C</td><td>"+data[2]+"</td></tr>"+
-            "<tr><td>Garage D</td><td>"+data[3]+"</td></tr>"+
-            "<tr><td>Garage H</td><td>"+data[4]+"</td></tr>"+
-            "<tr><td>Garage I</td><td>"+data[5]+"</td></tr>"+
-            "<tr><td>Garage Libra</td><td>"+data[6]+"</td></tr>"
-        );
-    });
-}*/
 
-function refreshParkingData(){
-    //$("#parking-data").contentWindow.location.reload(); //reload parking iframe
-    $("#parking-data").src = $("#parking-data").src;
-    var t = setTimeout(setDate, 300000);
-}
-
-function initMap() {
-						 
-    var location = {lat: 28.602784, lng: -81.202022};	//Select a location by coord
-    //change to center on uni latlong
-    var mapDiv = document.getElementById('map');	//Find div for map
-    var map = new google.maps.Map(mapDiv, {			//Create map in map div, pass in properties
-        center: location,
-        zoom: 13
-    });
-    var trafficLayer = new google.maps.TrafficLayer();
-    trafficLayer.setMap(map);
-}
-
-/*function getParkingData(){
-    
-    //var $ = getCounts();
-
-    var garageCounts = [0,0,0,0,0,0,0];
-
-    var $ = getCounts();
-    
-    garageCounts[0] = $("#gvCounts_DXDataRow0").find("strong").html();	//Get garage counts by unique IDs, stored in config
-    garageCounts[1] = $("#gvCounts_DXDataRow1").find("strong").html();
-    garageCounts[2] = $("#gvCounts_DXDataRow2").find("strong").html();
-    garageCounts[3] = $("#gvCounts_DXDataRow3").find("strong").html();
-    garageCounts[4] = $("#gvCounts_DXDataRow4").find("strong").html();
-    garageCounts[5] = $("#gvCounts_DXDataRow5").find("strong").html();
-    garageCounts[6] = $("#gvCounts_DXDataRow6").find("strong").html();
-
-    console.log("garage data:"+garageCounts);    
-
-    $("#garages").html(
-        "<tr><td>Garage A</td><td>"+garageCounts[0]+"</td></tr>"+
-        "<tr><td>Garage B</td><td>"+garageCounts[1]+"</td></tr>"+
-        "<tr><td>Garage C</td><td>"+garageCounts[2]+"</td></tr>"+
-        "<tr><td>Garage D</td><td>"+garageCounts[3]+"</td></tr>"+
-        "<tr><td>Garage H</td><td>"+garageCounts[4]+"</td></tr>"+
-        "<tr><td>Garage I</td><td>"+garageCounts[5]+"</td></tr>"+
-        "<tr><td>Garage Libra</td><td>"+garageCounts[6]+"</td></tr>"
-    );
-
-}
-function getCounts(){
-    var connectionString = "http://secure.parking.ucf.edu/GarageCount/iframe.aspx/";
-    
-    $page = $("body").load(connectionString);
-    
-    return Httpreq.responseText;
-}*/
