@@ -3,9 +3,12 @@
 		color: white !important;
 		background-color: black !important;
 	}
+	#top-row{
+		margin-top: 40px;
+	}
 	#bottom-row{
 		position: absolute;
-		bottom: 10px;
+		bottom: 20px;
 		width: 100%;
 	}
 	#map{
